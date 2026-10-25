@@ -12,7 +12,7 @@ ClearTerms aims to make these details easier to find and understand.
 
 ## Our Solution
 
-ClearTerms uses Google's Gemma model through the Gemini API to analyze policy text and explain important clauses in plain English, while keeping the original text available for verification.
+ClearTerms uses Google's hosted Gemma models through the Google Gen AI SDK to analyze policy text and explain important clauses in plain English, while keeping the original text available for verification.
 
 ## Features
 
@@ -28,7 +28,7 @@ ClearTerms uses Google's Gemma model through the Gemini API to analyze policy te
 
 - **Language:** Python
 - **Frontend:** Streamlit
-- **AI:** Google Gemma through the Gemini API
+- **AI:** Google Gemma models
 - **SDK:** Google Gen AI Python SDK
 - **Version Control:** Git and GitHub
 
@@ -36,7 +36,7 @@ ClearTerms uses Google's Gemma model through the Gemini API to analyze policy te
 
 1. Paste the text of a privacy policy or terms of service.
 2. Submit the text for analysis.
-3. ClearTerms uses the Gemma model to identify relevant clauses and summarize their meaning.
+3. ClearTerms uses the configured Gemma model to identify relevant clauses and summarize their meaning.
 4. Review the structured report, including explanations and supporting excerpts.
 5. Use the report to decide which parts of the policy deserve closer attention.
 
@@ -46,7 +46,7 @@ ClearTerms uses Google's Gemma model through the Gemini API to analyze policy te
 
 - Python 3.10 or later, compatible with the selected dependencies
 - Git
-- A Google API key with access to a supported Gemma model through the Gemini API
+- A Google API key with access to a supported hosted Gemma model
 
 ### Installation
 
@@ -81,21 +81,30 @@ pip install -r requirements.txt
 
 ### Configure the API Key
 
-Set your API key as an environment variable.
+Create a root `.env` file by copying `.env.example`, then replace the
+placeholder with your API key. The analyzer loads `.env` from the project root
+without overriding environment variables that are already set.
 
 **Windows PowerShell:**
 
 ```powershell
-$env:GEMINI_API_KEY="your_api_key_here"
+Copy-Item .env.example .env
+notepad .env
 ```
 
 **macOS or Linux:**
 
 ```bash
-export GEMINI_API_KEY="your_api_key_here"
+cp .env.example .env
+$EDITOR .env
 ```
 
-Never commit API keys or other secrets to GitHub.
+Replace the placeholder value in `.env` with your key. Alternatively, provide
+`GEMINI_API_KEY` through your shell environment. This environment-variable name
+is required by the Google Gen AI SDK and does not mean ClearTerms uses a Gemini
+model. Existing shell values take
+precedence over `.env`. Never commit API keys or other secrets to GitHub;
+`.env` is excluded by `.gitignore`.
 
 ### Run the Application
 
@@ -125,7 +134,8 @@ Contributions, feedback, bug reports, and suggestions are welcome.
 
 Built as a Hacktoberfest 2026 Hackday project. Features and implementation details may evolve as development progresses.
 
+The Streamlit interface calls `analyze_policy` in `analyzer.py` and displays validated findings with their source excerpts. Analysis is Gemma-only; the default model is `gemma-4-26b-a4b-it`. One minimal request to this model using the configured key succeeded. Full policy analysis, JSON conformance, and evidence quality should still be verified before relying on results.
+
 ## License
 
 This project is intended to be released under the MIT License. See [LICENSE](LICENSE) for the terms once the license file has been added.
-
